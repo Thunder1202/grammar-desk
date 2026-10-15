@@ -30,6 +30,41 @@ A static English-grammar learning site for levels **A1, A2, B1, B2, C1/C2**, ava
   kinetic headings, scroll bar, and the **UI language translator**.
 - `favicon.svg` — site icon.
 
+## Topic inventory (keep this in sync)
+Counts and the current topic file (slug) per level. If you add or remove a topic, update
+this list **and** the count text in `index.html`, the level hero, and the `TR` keys in
+`app.js` (see "Adding a new topic").
+
+- **A1 — Beginner (19):** to-be, possessives, present-simple, present-continuous,
+  present-simple-vs-continuous, there-is-there-are, countable-and-uncountable-nouns,
+  articles-a-an-the, past-simple-of-to-be, past-simple, can-cant, have-got,
+  prepositions-of-place-and-time, question-forms, demonstratives, imperatives, plural-nouns,
+  possessive-pronouns, basic-linkers
+- **A2 — Elementary (16):** future-going-to, future-arrangements-and-will,
+  comparatives-and-superlatives, quantifiers, present-perfect-basic, past-continuous,
+  object-pronouns, modals-must-have-to-should, too-enough-too-much-many, question-tags,
+  infinitive-vs-gerund, indefinite-pronouns, adjectives-and-adverbs,
+  prepositions-of-movement, zero-conditional, time-clauses
+- **B1 — Intermediate (18):** present-perfect-vs-past-simple, present-perfect-continuous,
+  past-perfect, future-forms-review, first-conditional, second-conditional,
+  passive-voice-present-and-past, modals-of-deduction, reported-speech-statements,
+  relative-clauses, used-to-would, gerund-and-infinitive, articles-review, phrasal-verbs,
+  reflexive-and-reciprocal-pronouns, so-and-neither, past-perfect-continuous, so-and-such
+- **B2 — Upper-intermediate (14):** third-conditional, mixed-conditionals,
+  passive-voice-all-tenses, reported-speech-full, future-perfect-and-continuous,
+  past-modals-of-deduction, perfect-modals, relative-clauses-advanced, wish-if-only,
+  causative-have-get-something-done, inversion-basic, linking-words-and-cohesion,
+  advanced-articles-and-determiners, future-in-the-past
+- **C1/C2 — Advanced (10):** inversion-full, emphasis-cleft-sentences, nominalisation,
+  participle-clauses, subjunctive-and-unreal-past, advanced-passives, alternatives-to-if,
+  register-and-style, cohesive-devices-for-writing, ellipsis-and-substitution
+
+The four count strings that must agree everywhere:
+`index.html` spans (`Beginner · 19 topics`, `Elementary · 16 topics`, `Intermediate · 18 topics`,
+`Upper-intermediate · 14 topics`, `Advanced · 10 topics`), each level hero
+(`Beginner. 19 topics. Choose one.` …), and the matching `TR` entries in `app.js`
+(both the `· N topics` and the `N topics. Choose one.` forms, in English/Russian/Uzbek).
+
 ## Page conventions (every page)
 - `<html lang="en" data-skin="p3" data-lang="en">`.
 - `<head>`: charset, viewport, `<title>X - Grammar Desk</title>`, then a block of
@@ -89,12 +124,33 @@ Each topic page uses a 5-pane layout:
 3. **Link it** from the correct level page: add an `<li>` to `.menu` on `a1..c1.html`, with
    `.lv > b` (title) + `.lv span` ("Open topic") + a `.tp` preview containing `.tl[data-l]`
    for en/ru/uz.
-4. If the level page's topic count changes, update the count text on `index.html` and on
-   that level page's hero — and their `TR` entries.
+4. If the level page's topic count changes, update it in **all four** places: the `index.html`
+   span, the level page hero, that level page's `<meta name="description">` / `og:description`
+   / `twitter:description`, and both `TR` keys in `app.js` (the `· N topics` and the
+   `N topics. Choose one.` forms, in en/ru/uz). Then update the inventory list above.
+5. Quick verification: `node --check app.js`; count `class="lv"` links on the level page;
+   and check every `href="*.html"` resolves to a real file.
 
 ## Adding a new level
 Create `x.html` from an existing level page, add it to `.menu` on `index.html`, and add the
 hero/`TR` strings for the new level.
+
+## Work log / status (update when you finish a batch)
+- Last pushed commit: `a3413f2 Add AGENTS.md project guide`.
+- **Not yet pushed / not live:** a batch of new lesson pages plus edits to the level pages,
+  `index.html`, `app.js` and this file. New topics added this round:
+  - A1: `demonstratives`, `imperatives`, `plural-nouns`, `possessive-pronouns`, `basic-linkers`
+  - A2: `indefinite-pronouns`, `adjectives-and-adverbs`, `prepositions-of-movement`,
+    `zero-conditional`, `time-clauses`
+  - B1: `reflexive-and-reciprocal-pronouns`, `so-and-neither`, `past-perfect-continuous`,
+    `so-and-such`
+  - B2: `future-in-the-past`
+  - C1: `ellipsis-and-substitution`
+- All levels are wired and counts reconciled to **A1=19, A2=16, B1=18, B2=14, C1=10**.
+  Verified: `node --check app.js` passes, every internal link resolves, and each new page
+  has panes `p1`–`p5` with 8 drill answers.
+- Next step to publish: `git add -A && git commit -m "..." && git push` (the live site only
+  changes after a push).
 
 ## Local preview
 Open `index.html` directly, or run `npx --yes serve "."` in this folder and visit the URL.
