@@ -27,7 +27,9 @@ A static English-grammar learning site for levels **A1, A2, B1, B2, C1/C2**, ava
 - `*.html` (all other files) — one lesson/topic per file.
 - `style.css` — all styling, including the 4 theme skins.
 - `app.js` — all behaviour: theme cycling, page transitions, click bursts, pointer trail,
-  kinetic headings, scroll bar, and the **UI language translator**.
+  kinetic headings, scroll bar, the **topic search**, and the **UI language translator**.
+- `search-data.js` — generated search index (`window.GD_Search`). Do not hand-edit.
+- `gen-search.js` — the generator that rebuilds `search-data.js` (Node, no deps).
 - `favicon.svg` — site icon.
 
 ## Topic inventory (keep this in sync)
@@ -118,6 +120,38 @@ Each topic page uses a 5-pane layout:
   `documentElement.lang` kept in sync. Switcher buttons: `data-act="lang" data-l="xx"`.
   The header switcher and the in-lesson `.lgb` switcher are both driven by `app.js`.
 
+## Topic search (client-side)
+- A **Search** chip sits in the header `.hctl` (injected by `srButton()` at boot). Shortcuts:
+  `Ctrl/⌘+K` or `/` opens it, `Esc` closes, `↑`/`↓` move, `Enter` opens.
+- Index format — `window.GD_Search = [{u,t,l,c,k}, …]`:
+  `u` page url, `t` title, `l` level, `c` the topic's "We cover:" terms, `k` the full
+  3-language preview text.
+- **`search-data.js` is generated, never hand-edited.** After adding, renaming or removing a
+  topic, regenerate it or the new topic will be invisible to search:
+  ```
+  node gen-search.js "<absolute path to this folder>"
+  ```
+  It parses the `.menu` markup of `a1..c1.html`, so the menu entry must exist first.
+- `app.js` lazy-loads `search-data.js` on first use, so the file must sit next to the pages.
+- Ranking is relevance-based, not level order: word-boundary token match, scored
+  title (100) > cover terms (40) > preview (5) > level (3); sorted by how many query terms
+  matched, then score, then level. Matching is word-start aware so `any` hits `anything`
+  but not `m**any**`.
+- UI strings come from the `TR` keys `Search`, `Type to search...`, `No results`.
+- Styles are the `/* ===== search ===== */` block at the end of `style.css`
+  (`.se`, `.sch`, `.schbox`, `.schin`, `.schres`, `.hl`). Overlay `z-index:9000`.
+
+## Analytics (GoatCounter)
+- Every `.html` page carries this snippet, inserted just before `</head>`:
+  ```html
+  <script data-goatcounter="https://mrgood.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+  ```
+- Site code is **mrgood**. Stats are **private** — dashboard: https://mrgood.goatcounter.com
+  (owner login only). There is deliberately **no public visitor counter** on the site.
+- If the site code ever changes, the snippet must be swapped in **all 83** html files
+  (a simple find/replace of the `data-goatcounter` URL).
+- Only visits after the snippet ships are counted; earlier traffic is lost.
+
 ## Adding a new topic
 1. Copy an existing lesson file and rename it to the topic slug (e.g. `present-simple.html`).
 2. Update `<title>`, `<meta>`, the `<h1>`, breadcrumb, and all five panes (with `.lg` x3).
@@ -128,29 +162,37 @@ Each topic page uses a 5-pane layout:
    span, the level page hero, that level page's `<meta name="description">` / `og:description`
    / `twitter:description`, and both `TR` keys in `app.js` (the `· N topics` and the
    `N topics. Choose one.` forms, in en/ru/uz). Then update the inventory list above.
-5. Quick verification: `node --check app.js`; count `class="lv"` links on the level page;
-   and check every `href="*.html"` resolves to a real file.
+5. **Regenerate the search index** (`node gen-search.js "<project folder>"`) so the new topic
+   is findable via the header Search button.
+6. Quick verification: `node --check app.js`; count `class="lv"` links on the level page;
+   check every `href="*.html"` resolves to a real file; and confirm `search-data.js` now
+   lists the new topic.
 
 ## Adding a new level
 Create `x.html` from an existing level page, add it to `.menu` on `index.html`, and add the
 hero/`TR` strings for the new level.
 
 ## Work log / status (update when you finish a batch)
-- Last pushed commit: `a3413f2 Add AGENTS.md project guide`.
-- **Not yet pushed / not live:** a batch of new lesson pages plus edits to the level pages,
-  `index.html`, `app.js` and this file. New topics added this round:
-  - A1: `demonstratives`, `imperatives`, `plural-nouns`, `possessive-pronouns`, `basic-linkers`
-  - A2: `indefinite-pronouns`, `adjectives-and-adverbs`, `prepositions-of-movement`,
-    `zero-conditional`, `time-clauses`
-  - B1: `reflexive-and-reciprocal-pronouns`, `so-and-neither`, `past-perfect-continuous`,
-    `so-and-such`
-  - B2: `future-in-the-past`
-  - C1: `ellipsis-and-substitution`
-- All levels are wired and counts reconciled to **A1=19, A2=16, B1=18, B2=14, C1=10**.
-  Verified: `node --check app.js` passes, every internal link resolves, and each new page
-  has panes `p1`–`p5` with 8 drill answers.
-- Next step to publish: `git add -A && git commit -m "..." && git push` (the live site only
-  changes after a push).
+- **All work below is pushed and live** on https://thunder1202.github.io/grammar-desk/.
+- Version labelling: this folder (`grammar-desk-v7`) is the newest build. Older copies sit
+  next to it in `D:\Новая папка`: `grammar-desk-v6.zip`, `grammar-desk-v7-copy.zip`
+  (a zip of this folder), and `grammar-desk-v1-unfinished\`.
+- Commits this session, oldest → newest:
+  - `7194b45` Add 16 grammar topics across A1-C1 and sync counts
+  - `e3a208a` Add client-side topic search with relevance ranking
+  - `815f1e7` Add GoatCounter analytics to all pages
+  - `cac7cf7` Point GoatCounter at the mrgood site code
+- Shipped features:
+  - **16 new lesson pages**, wired into the level menus; counts reconciled to
+    **A1=19, A2=16, B1=18, B2=14, C1=10** (77 topic pages, 83 html files).
+  - **Header Search** over all 77 topics, trilingual, with relevance ranking, word-boundary
+    matching, match highlighting and keyboard navigation.
+  - **GoatCounter analytics** on every page (private dashboard).
+- Open items / known limits:
+  - Search is literal word matching — no fuzzy/typo tolerance and no synonyms.
+  - The GoatCounter **API token does not work** for automated checks (the public
+    `?access-token=` value is not an API token), so stats can only be read by logging into
+    the dashboard.
 
 ## Local preview
 Open `index.html` directly, or run `npx --yes serve "."` in this folder and visit the URL.
