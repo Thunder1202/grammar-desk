@@ -31,6 +31,12 @@ A static English-grammar learning site for levels **A1, A2, B1, B2, C1/C2**, ava
 - `search-data.js` — generated search index (`window.GD_Search`). Do not hand-edit.
 - `gen-search.js` — the generator that rebuilds `search-data.js` (Node, no deps).
 - `favicon.svg` — site icon.
+- `practice.html` — **Big Practice** hub (linked from the home page under "Practice"): a `.menu` of quizzes.
+- `practice-<topic>.html` — one quiz page each. Quiz data is an inline `window.GD_QUIZ = {id, rules, ex, q}`
+  script, followed by `practice.js` (the shared quiz engine).
+- `practice.js` — quiz engine: stats, progress bar, exercise chips, answer checking, wrong answers come
+  back 4 questions later, progress saved in `localStorage['gd-prac-<id>']`. All its UI text is in its
+  own `UI` object (en/ru/uz) and it re-renders when `data-lang` changes, so it does **not** use `TR`.
 
 ## Topic inventory (keep this in sync)
 Counts and the current topic file (slug) per level. If you add or remove a topic, update
@@ -167,6 +173,18 @@ Each topic page uses a 5-pane layout:
 6. Quick verification: `node --check app.js`; count `class="lv"` links on the level page;
    check every `href="*.html"` resolves to a real file; and confirm `search-data.js` now
    lists the new topic.
+
+## Big Practice (quizzes)
+- Quiz data format: `rules` = `{key:{en,ru,uz}}` (HTML allowed); `ex` = `[{h:{en,ru,uz}, box?}]` (one per
+  exercise, numbered automatically); `q` = `[{e, q, a:[accepted answers], alt?, r:rule key, ru, uz, n?}]`.
+  `___` in `q` renders as a blank. `ru`/`uz` are translations shown in that language only; `n` is a
+  string or `{en,ru,uz}`. Answer checking ignores case, punctuation and don't/do not differences.
+- To add a quiz: copy `practice-present-simple.html`, change `<title>`/`<meta>`, hero and the
+  `GD_QUIZ` object (new `id`), then add an `<li>` to `.menu` in `practice.html` and update the
+  `· N quiz` count on `index.html` plus its `TR` key in `app.js`.
+- Styles: the `/* ===== big practice ===== */` block at the end of `style.css` (`--okc`/`--badc`
+  per skin for right/wrong colours).
+- Quizzes are not in the topic search index (gen-search only reads `a1..c1.html`).
 
 ## Adding a new level
 Create `x.html` from an existing level page, add it to `.menu` on `index.html`, and add the

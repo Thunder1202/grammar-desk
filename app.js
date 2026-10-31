@@ -49,7 +49,16 @@ var TR={
  "Hide":{ru:"\u0421\u043a\u0440\u044b\u0442\u044c",uz:"Yashirish"},
  "Search":{ru:"\u041f\u043e\u0438\u0441\u043a",uz:"Qidiruv"},
  "Type to search...":{ru:"\u0412\u0432\u0435\u0434\u0438\u0442\u0435 \u0434\u043b\u044f \u043f\u043e\u0438\u0441\u043a\u0430...",uz:"Qidirish uchun yozing..."},
- "No results":{ru:"\u041d\u0438\u0447\u0435\u0433\u043e \u043d\u0435 \u043d\u0430\u0439\u0434\u0435\u043d\u043e",uz:"Natija topilmadi"}
+ "Big Practice":{ru:"Большая практика",uz:"Katta amaliyot"},
+ "For everyone \u00b7 1 quiz":{ru:"Для всех \u00b7 1 тест",uz:"Hamma uchun \u00b7 1 test"},
+ "Practice for everyone. Pick a quiz and start.":{ru:"Практика для всех. Выберите тест и начните.",uz:"Hamma uchun amaliyot. Testni tanlang va boshlang."},
+ "A1 \u00b7 111 questions":{ru:"A1 \u00b7 111 вопросов",uz:"A1 \u00b7 111 savol"},
+ "More quizzes are coming soon.":{ru:"Скоро появятся новые тесты.",uz:"Tez orada yangi testlar qo'shiladi."},
+ "Type your answer and check it. Wrong answers come back later.":{ru:"Напишите ответ и проверьте. Вопросы с ошибками вернутся позже.",uz:"Javobni yozing va tekshiring. Xato javoblar keyinroq yana chiqadi."},
+ "Your progress is saved on this device.":{ru:"Ваш прогресс сохраняется на этом устройстве.",uz:"Natijangiz shu qurilmada saqlanadi."},
+ "No results":{ru:"\u041d\u0438\u0447\u0435\u0433\u043e \u043d\u0435 \u043d\u0430\u0439\u0434\u0435\u043d\u043e",uz:"Natija topilmadi"},
+ "Practice":{ru:"\u041f\u0440\u0430\u043a\u0442\u0438\u043a\u0430",uz:"Mashq"},
+ "Want to practice this topic?":{ru:"\u0425\u043e\u0442\u0438\u0442\u0435 \u043f\u043e\u0442\u0440\u0435\u043d\u0438\u0440\u043e\u0432\u0430\u0442\u044c\u0441\u044f \u0441 \u044d\u0442\u043e\u0439 \u0442\u0435\u043c\u043e\u0439?",uz:"Ushbu mavzuda mashq qilmoqchimisiz?"}
 };
 function L(k,lang){lang=lang||R.dataset.lang||'en';var e=TR[k];return(e&&(lang==='en'||e[lang]))?(lang==='en'?k:e[lang]):k}
 var ORIG=null;
