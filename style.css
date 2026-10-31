@@ -484,6 +484,15 @@ html[data-skin=p5] .qst div{clip-path:polygon(0 0,100% 6%,100% 100%,3% 100%)}
 .qin.sh{animation:qsh .3s}
 @media(max-width:520px){.qq{font-size:19px}.qst b{font-size:24px}}
 
+/* ================= in plain words ================= */
+.plain{margin:0 0 18px;padding:12px 16px 14px;border:2px dashed var(--bar);background:rgba(127,127,127,.12)}
+.plain h4{margin-top:0}
+.plain p:last-child{margin-bottom:0}
+.plain ul{margin:6px 0 10px}
+.plain li{margin-bottom:6px}
+html[data-skin=basic] .plain{border-radius:10px;border-width:1px}
+.gl{color:var(--mute);font-weight:400;font-size:.9em}
+
 /* ================= mini exams ================= */
 .eo{display:grid;gap:10px;margin:0 0 4px}
 .eb{all:unset;box-sizing:border-box;display:flex;align-items:center;gap:12px;width:100%;padding:12px 14px;background:var(--card);color:var(--ink);border:2px solid var(--edge);box-shadow:var(--sh);font:600 18px/1.3 "Barlow","Golos Text",sans-serif;cursor:pointer;transition:border-color .15s,background .15s}

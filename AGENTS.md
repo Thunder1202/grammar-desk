@@ -105,6 +105,12 @@ Each topic page uses a 5-pane layout:
 - Practice items: `<div class="q">question <button class="ab" data-act="ans" aria-expanded="false" aria-controls="aN">Answer</button><div class="ans" id="aN" hidden>...</div></div>`.
   `id` values must be unique within the page.
 - Panes 4 and 5 usually end with `<p class="tag">English only</p>`.
+- Pane 3 ends each `.lg` with an "In plain words" box: `<div class="plain"><h4>...</h4><p>...</p><ul class="ex">
+  <li><b>example</b> meaning</li></ul><p>...</p></div>`. Heading text: `In plain words` / `Простыми словами` /
+  `Oddiy so'zlar bilan`. Write it for someone who knows no grammar in any language: an everyday picture,
+  real examples with their meaning, and no grammar terms. It comes after the normal explanation, never instead.
+- Grammar words in pane 3 carry a short meaning once per language block:
+  `verb<span class="gl"> (action word)</span>`. Keep formulas (with + or →) and `.x` / `.ok` examples free of these.
 - Pane 5 ends with a next-step box, in level-menu order:
   `<div class="prac nxt"><p class="ptx">Next topic</p><a class="chip" href="slug.html">Title</a></div>`.
   The last topic of a level uses `Next level` and links to the next level page; the last C1/C2 topic
@@ -168,7 +174,8 @@ Each topic page uses a 5-pane layout:
 
 ## Adding a new topic
 1. Copy an existing lesson file and rename it to the topic slug (e.g. `present-simple.html`).
-2. Update `<title>`, `<meta>`, the `<h1>`, breadcrumb, and all five panes (with `.lg` x3).
+2. Update `<title>`, `<meta>`, the `<h1>`, breadcrumb, and all five panes (with `.lg` x3), including the
+   "In plain words" box in pane 3.
 3. **Link it** from the correct level page: add an `<li>` to `.menu` on `a1..c1.html`, with
    `.lv > b` (title) + `.lv span` ("Open topic") + a `.tp` preview containing `.tl[data-l]`
    for en/ru/uz.
@@ -235,11 +242,12 @@ hero/`TR` strings for the new level.
   - **Practice Arena**: the old "Big Practice" section, renamed.
   - **13 mini exams** (see "Mini exams"), simpler English in A1/A2 panes 4-5, next-step boxes on all
     lessons, breadcrumb chips, Cyrillic fonts, and the phone header fix.
+  - **"In plain words" boxes** on all 77 topics (pane 3), plus short meanings beside grammar words.
 - Open items / known limits:
   - **Mini-game is local only:** `game.js` and `present-simple-game.html` are not committed, and the
     `Practice` box on `present-simple.html` is kept out of commits. Known bugs: curly apostrophes and
     an answer ending in a dot and a space are marked wrong, and its RU/UZ "why" text needs correcting.
-  - Exam questions and RU/UZ explanations have not had a teacher review yet.
+  - Exam questions, RU/UZ exam explanations and RU/UZ plain-words boxes have not had a teacher review yet.
   - Search is literal word matching — no fuzzy/typo tolerance and no synonyms.
   - The GoatCounter **API token does not work** for automated checks (the public
     `?access-token=` value is not an API token), so stats can only be read by logging into
