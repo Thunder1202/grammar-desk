@@ -127,6 +127,13 @@ Each topic page uses a 5-pane layout:
    - `app.js` walks text nodes in `.wrap`, caches the originals, and re-renders on change.
 
 ## Themes / skins
+- **`basic` is the default skin** and the calm one meant for real study: no animation while reading, no
+  decoration, one blue accent. Its final overrides are the `/* ===== basic: calm reading theme ===== */`
+  block at the end of `style.css`.
+- Basic has two modes, set by `<html data-mode="light|dark">`. The header Theme chip opens a roulette wheel (`.thm`, built in `tmOpen` in `app.js`)
+  with Light, Dark, Persona 3, Persona 4 and Persona 5. Tap a slice, or drag or flick the wheel by mouse or finger; where it lands under the blade is the new theme. `localStorage['gd-theme']` holds
+  `light`, `dark`, `p3`, `p4` or `p5`; with no saved choice, Basic follows the device's light or dark setting.
+  Each page's inline head script must apply this before paint, so keep it in sync with `app.js`.
 - Skins: `p3`, `p4`, `p5`, `basic` (Persona 3/4/5 + plain). Set via `<html data-skin>`,
   stored in `localStorage['gd-theme']`, cycled by the header chip. Each skin has its own
   variables, motion, page-transition and particle styles in `style.css`.
@@ -243,6 +250,8 @@ hero/`TR` strings for the new level.
   - **13 mini exams** (see "Mini exams"), simpler English in A1/A2 panes 4-5, next-step boxes on all
     lessons, breadcrumb chips, Cyrillic fonts, and the phone header fix.
   - **"In plain words" boxes** on all 77 topics (pane 3), plus short meanings beside grammar words.
+  - **Basic is the default theme** (Light and Dark), with a spinnable roulette theme wheel styled per theme,
+    a **To be quiz** (77 questions), and a **Start all over** button on quizzes.
 - Open items / known limits:
   - **Mini-game is local only:** `game.js` and `present-simple-game.html` are not committed, and the
     `Practice` box on `present-simple.html` is kept out of commits. Known bugs: curly apostrophes and

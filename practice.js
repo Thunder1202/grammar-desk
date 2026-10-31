@@ -23,6 +23,8 @@ var UI={
  clean:{en:"No mistakes in this exercise!",ru:"В этом упражнении нет ни одной ошибки!",uz:"Bu mashqda birorta ham xato yo'q!"},
  restart:{en:"Start this exercise again",ru:"Начать упражнение заново",uz:"Mashqni qaytadan boshlash"},
  reset:{en:"Reset all progress",ru:"Сбросить весь прогресс",uz:"Barcha natijani o'chirish"},
+ over:{en:"Start all over",ru:"Начать всё сначала",uz:"Hammasini boshidan boshlash"},
+ sure:{en:"Delete all your progress in this quiz and start again?",ru:"Удалить весь прогресс в этом тесте и начать заново?",uz:"Bu testdagi barcha natijani o'chirib, qaytadan boshlaysizmi?"},
  nav:{en:"Exercises",ru:"Упражнения",uz:"Mashqlar"}
 };
 function lg(){return R.dataset.lang||'en'}
@@ -50,7 +52,7 @@ function head(){
  h+='<div class="qbar" role="progressbar" aria-valuemin="0" aria-valuemax="'+Z.q.length+'" aria-valuenow="'+cnt()+'"><i style="width:'+(cnt()/Z.q.length*100).toFixed(1)+'%"></i></div>';
  h+='<div class="qch" role="group" aria-label="'+esc(u('nav'))+'">';
  Z.ex.forEach(function(x,i){h+='<button class="lt'+(done(i)?' dn':'')+'" data-q="ex" data-i="'+i+'" aria-pressed="'+(i===cur)+'" aria-label="'+esc(u('ex',{n:i+1}))+'">'+(done(i)?'✓':i+1)+'</button>'});
- return h+'</div>';
+ return h+'</div><div class="qrow qover"><button class="ab" data-q="over">↻ '+esc(u('over'))+'</button></div>';
 }
 
 function draw(focus){
@@ -108,7 +110,7 @@ box.addEventListener('click',function(e){
  else if(a==='ex')start(+b.dataset.i);
  else if(a==='tr'){var p=D.getElementById('qtr'),o=p.hidden;p.hidden=!o;b.setAttribute('aria-expanded',String(o))}
  else if(a==='redo'){inEx(cur).forEach(function(i){delete mastered[i];delete wrongN[i]});start(cur)}
- else if(a==='reset'){mastered={};wrongN={};nOk=0;nBad=0;start(0)}
+ else if(a==='reset'||(a==='over'&&window.confirm(u('sure')))){mastered={};wrongN={};nOk=0;nBad=0;start(0)}
 });
 new MutationObserver(function(){draw(false)}).observe(R,{attributes:true,attributeFilter:['data-lang']});
 start(cur);
