@@ -1,4 +1,4 @@
-/* Big Practice quiz engine. Reads window.GD_QUIZ = {id, rules, ex, q}. Text is trilingual {en,ru,uz}. */
+/* Practice Arena quiz engine. Reads window.GD_QUIZ = {id, rules, ex, q}. Text is trilingual {en,ru,uz}. */
 (function(){
 var Z=window.GD_QUIZ,D=document,R=D.documentElement,box=D.getElementById('qz');
 if(!Z||!box)return;

@@ -49,8 +49,25 @@ var TR={
  "Hide":{ru:"\u0421\u043a\u0440\u044b\u0442\u044c",uz:"Yashirish"},
  "Search":{ru:"\u041f\u043e\u0438\u0441\u043a",uz:"Qidiruv"},
  "Type to search...":{ru:"\u0412\u0432\u0435\u0434\u0438\u0442\u0435 \u0434\u043b\u044f \u043f\u043e\u0438\u0441\u043a\u0430...",uz:"Qidirish uchun yozing..."},
- "Big Practice":{ru:"Большая практика",uz:"Katta amaliyot"},
- "For everyone \u00b7 1 quiz":{ru:"Для всех \u00b7 1 тест",uz:"Hamma uchun \u00b7 1 test"},
+ "Practice Arena":{ru:"Арена практики",uz:"Amaliyot arenasi"},
+ "Topics 1–6 · 12 questions":{ru:"Темы 1–6 · 12 вопросов",uz:"1–6-mavzular · 12 savol"},
+ "Topics 7–12 · 12 questions":{ru:"Темы 7–12 · 12 вопросов",uz:"7–12-mavzular · 12 savol"},
+ "Topics 13–19 · 14 questions":{ru:"Темы 13–19 · 14 вопросов",uz:"13–19-mavzular · 14 savol"},
+ "Topics 13–16 · 8 questions":{ru:"Темы 13–16 · 8 вопросов",uz:"13–16-mavzular · 8 savol"},
+ "Topics 13–18 · 12 questions":{ru:"Темы 13–18 · 12 вопросов",uz:"13–18-mavzular · 12 savol"},
+ "Topics 7–14 · 16 questions":{ru:"Темы 7–14 · 16 вопросов",uz:"7–14-mavzular · 16 savol"},
+ "Topics 7–10 · 8 questions":{ru:"Темы 7–10 · 8 вопросов",uz:"7–10-mavzular · 8 savol"},
+ "Mini exam 1":{ru:"Мини-экзамен 1",uz:"Mini imtihon 1"},
+ "Mini exam 2":{ru:"Мини-экзамен 2",uz:"Mini imtihon 2"},
+ "Mini exam 3":{ru:"Мини-экзамен 3",uz:"Mini imtihon 3"},
+ "Mini exams":{ru:"Мини-экзамены",uz:"Mini imtihonlar"},
+ "Time for a mini exam!":{ru:"Время для мини-экзамена!",uz:"Mini imtihon vaqti!"},
+ "Choose the right answer. See why it is right and why the others are wrong.":{ru:"Выберите правильный ответ. Узнайте, почему он верный, а другие неверные.",uz:"To'g'ri javobni tanlang. Nega u to'g'ri, boshqalari esa xato ekanini biling."},
+ "Your best score is saved on this device.":{ru:"Ваш лучший результат сохраняется на этом устройстве.",uz:"Eng yaxshi natijangiz shu qurilmada saqlanadi."},
+ "Next topic":{ru:"Следующая тема",uz:"Keyingi mavzu"},
+ "Next level":{ru:"Следующий уровень",uz:"Keyingi daraja"},
+ "You finished the last topic!":{ru:"Вы прошли последнюю тему!",uz:"Siz oxirgi mavzuni tugatdingiz!"},
+ "For everyone · 1 quiz · 13 mini exams":{ru:"Для всех · 1 тест · 13 мини-экзаменов",uz:"Hamma uchun · 1 test · 13 ta mini imtihon"},
  "Practice for everyone. Pick a quiz and start.":{ru:"Практика для всех. Выберите тест и начните.",uz:"Hamma uchun amaliyot. Testni tanlang va boshlang."},
  "A1 \u00b7 111 questions":{ru:"A1 \u00b7 111 вопросов",uz:"A1 \u00b7 111 savol"},
  "More quizzes are coming soon.":{ru:"Скоро появятся новые тесты.",uz:"Tez orada yangi testlar qo'shiladi."},
@@ -61,7 +78,7 @@ var TR={
  "Want to practice this topic?":{ru:"\u0425\u043e\u0442\u0438\u0442\u0435 \u043f\u043e\u0442\u0440\u0435\u043d\u0438\u0440\u043e\u0432\u0430\u0442\u044c\u0441\u044f \u0441 \u044d\u0442\u043e\u0439 \u0442\u0435\u043c\u043e\u0439?",uz:"Ushbu mavzuda mashq qilmoqchimisiz?"}
 };
 function L(k,lang){lang=lang||R.dataset.lang||'en';var e=TR[k];return(e&&(lang==='en'||e[lang]))?(lang==='en'?k:e[lang]):k}
-var ORIG=null;
+var ORIG=null,HK=[];
 function i18nInit(){
  if(ORIG)return;ORIG=[];
  var w=D.querySelector('.wrap');if(!w)return;
@@ -76,6 +93,7 @@ function i18nInit(){
 function i18nApply(){
  var lang=R.dataset.lang||'en';
  if(ORIG)ORIG.forEach(function(o){o.n.nodeValue=o.lead+L(o.key,lang)+o.trail});
+ HK.forEach(function(o){o.h.textContent=L(o.k,lang);delete o.h.dataset.sp;split(o.h)});
  D.querySelectorAll('.ab').forEach(function(b){b.textContent=L(b.getAttribute('aria-expanded')==='true'?'Hide':'Answer',lang)});
 }
 
@@ -316,7 +334,7 @@ addEventListener('pageshow',function(e){if(e.persisted&&PT){PT.className='fx-pt'
 /* boot */
 srButton();
 if(RM){R.classList.remove('pt-hold');i18nInit();i18nApply();sync();return}
-[].forEach.call(D.querySelectorAll('h1'),split);
+[].forEach.call(D.querySelectorAll('h1'),function(h){var k=h.textContent.replace(/\s+/g,' ').trim();if(TR[k])HK.push({h:h,k:k});split(h)});
 stag();layers();mkPT();
 if(sg('gd-pt')){
  ss('gd-pt',null);R.classList.add('pt-came');PT.className='fx-pt hold';R.classList.remove('pt-hold');

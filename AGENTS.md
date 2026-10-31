@@ -31,9 +31,10 @@ A static English-grammar learning site for levels **A1, A2, B1, B2, C1/C2**, ava
 - `search-data.js` — generated search index (`window.GD_Search`). Do not hand-edit.
 - `gen-search.js` — the generator that rebuilds `search-data.js` (Node, no deps).
 - `favicon.svg` — site icon.
-- `practice.html` — **Big Practice** hub (linked from the home page under "Practice"): a `.menu` of quizzes.
+- `practice.html` — **Practice Arena** hub (linked from the home page under "Practice"): a `.menu` of quizzes.
 - `practice-<topic>.html` — one quiz page each. Quiz data is an inline `window.GD_QUIZ = {id, rules, ex, q}`
   script, followed by `practice.js` (the shared quiz engine).
+- `exam-<level>-<n>.html` — one mini exam each (13 pages). See "Mini exams". Engine: `exam.js`.
 - `practice.js` — quiz engine: stats, progress bar, exercise chips, answer checking, wrong answers come
   back 4 questions later, progress saved in `localStorage['gd-prac-<id>']`. All its UI text is in its
   own `UI` object (en/ru/uz) and it re-renders when `data-lang` changes, so it does **not** use `TR`.
@@ -104,6 +105,10 @@ Each topic page uses a 5-pane layout:
 - Practice items: `<div class="q">question <button class="ab" data-act="ans" aria-expanded="false" aria-controls="aN">Answer</button><div class="ans" id="aN" hidden>...</div></div>`.
   `id` values must be unique within the page.
 - Panes 4 and 5 usually end with `<p class="tag">English only</p>`.
+- Pane 5 ends with a next-step box, in level-menu order:
+  `<div class="prac nxt"><p class="ptx">Next topic</p><a class="chip" href="slug.html">Title</a></div>`.
+  The last topic of a level uses `Next level` and links to the next level page; the last C1/C2 topic
+  uses `You finished the last topic!` and links `Home`.
 
 ## Internationalisation (two systems — both must be respected)
 1. **Lesson content**: elements marked `.lg[data-l=xx]`; CSS shows only the block matching
@@ -120,6 +125,9 @@ Each topic page uses a 5-pane layout:
   stored in `localStorage['gd-theme']`, cycled by the header chip. Each skin has its own
   variables, motion, page-transition and particle styles in `style.css`.
 - `prefers-reduced-motion` is fully honoured — keep it that way for any new animation.
+- Fonts: none of the Latin display fonts or Barlow has Cyrillic, so every font stack carries a Cyrillic
+  fallback (`Oswald` for P3/P5 headings, `Rubik` for P4, `Golos Text` for body text). Browsers download
+  those only for Russian text. Keep the fallbacks when changing a font.
 
 ## Language switching
 - `data-lang` on `<html>` (`en`/`ru`/`uz`), stored in `localStorage['gd-lang']`,
@@ -154,7 +162,7 @@ Each topic page uses a 5-pane layout:
   ```
 - Site code is **mrgood**. Stats are **private** — dashboard: https://mrgood.goatcounter.com
   (owner login only). There is deliberately **no public visitor counter** on the site.
-- If the site code ever changes, the snippet must be swapped in **all 83** html files
+- If the site code ever changes, the snippet must be swapped in **all** html files
   (a simple find/replace of the `data-goatcounter` URL).
 - Only visits after the snippet ships are counted; earlier traffic is lost.
 
@@ -169,12 +177,13 @@ Each topic page uses a 5-pane layout:
    / `twitter:description`, and both `TR` keys in `app.js` (the `· N topics` and the
    `N topics. Choose one.` forms, in en/ru/uz). Then update the inventory list above.
 5. **Regenerate the search index** (`node gen-search.js "<project folder>"`) so the new topic
-   is findable via the header Search button.
+   is findable via the header Search button. Also add the new page's next-step box and repoint the
+   box on the topic before it (see "Lesson template").
 6. Quick verification: `node --check app.js`; count `class="lv"` links on the level page;
    check every `href="*.html"` resolves to a real file; and confirm `search-data.js` now
    lists the new topic.
 
-## Big Practice (quizzes)
+## Practice Arena (quizzes)
 - Quiz data format: `rules` = `{key:{en,ru,uz}}` (HTML allowed); `ex` = `[{h:{en,ru,uz}, box?}]` (one per
   exercise, numbered automatically); `q` = `[{e, q, a:[accepted answers], alt?, r:rule key, ru, uz, n?}]`.
   `___` in `q` renders as a blank. `ru`/`uz` are translations shown in that language only; `n` is a
@@ -182,9 +191,26 @@ Each topic page uses a 5-pane layout:
 - To add a quiz: copy `practice-present-simple.html`, change `<title>`/`<meta>`, hero and the
   `GD_QUIZ` object (new `id`), then add an `<li>` to `.menu` in `practice.html` and update the
   `· N quiz` count on `index.html` plus its `TR` key in `app.js`.
-- Styles: the `/* ===== big practice ===== */` block at the end of `style.css` (`--okc`/`--badc`
+- Styles: the `/* ===== practice arena ===== */` block at the end of `style.css` (`--okc`/`--badc`
   per skin for right/wrong colours).
 - Quizzes are not in the topic search index (gen-search only reads `a1..c1.html`).
+
+## Mini exams
+- One exam per 6 topics, in level-menu order. 1-2 leftover topics join the last exam of that level;
+  4 leftover topics get a shorter exam. Two questions per topic. Currently: A1 6/6/7, A2 6/6/4,
+  B1 6/6/6, B2 6/8, C1/C2 6/4 topics = 13 exams, 154 questions.
+- Questions and options are English only, like drills. The "why" explanations are EN/RU/UZ on purpose,
+  so a starter can understand a mistake. Keep A1/A2 questions in very simple English.
+- Data is an inline `window.GD_EXAM = {id, level, lvl, topics:{slug:title}, next:{u,t,k}, q}`, followed by
+  `exam.js`. `q` = `[{s:topic slug, q:text with ___, o:[3 options], a:right index, w:[[en,ru,uz] per option]}]`.
+  `w` has one explanation for every option: why it is right, or why it is wrong.
+- A wrong option must be really wrong. If a wrong option is valid English in any context, replace it.
+- The engine shuffles questions and options on every try, and saves the best score in
+  `localStorage['gd-exam-<id>']`. Its UI text is in its own `UI` object (en/ru/uz), like `practice.js`.
+- Links: an `<a class="lv lvx">` item after the last topic on the level page (`class="lv lvx"` keeps it out
+  of the search index and topic counts), a `prac nxt exn` box on that last lesson, and the list in
+  `practice.html`. The `Topics X–Y · N questions` strings and `Mini exam N` are `TR` keys.
+- If a topic moves between groups, update that exam's `topics`, `q` and links, and the `TR` keys.
 
 ## Adding a new level
 Create `x.html` from an existing level page, add it to `.menu` on `index.html`, and add the
@@ -206,7 +232,14 @@ hero/`TR` strings for the new level.
   - **Header Search** over all 77 topics, trilingual, with relevance ranking, word-boundary
     matching, match highlighting and keyboard navigation.
   - **GoatCounter analytics** on every page (private dashboard).
+  - **Practice Arena**: the old "Big Practice" section, renamed.
+  - **13 mini exams** (see "Mini exams"), simpler English in A1/A2 panes 4-5, next-step boxes on all
+    lessons, breadcrumb chips, Cyrillic fonts, and the phone header fix.
 - Open items / known limits:
+  - **Mini-game is local only:** `game.js` and `present-simple-game.html` are not committed, and the
+    `Practice` box on `present-simple.html` is kept out of commits. Known bugs: curly apostrophes and
+    an answer ending in a dot and a space are marked wrong, and its RU/UZ "why" text needs correcting.
+  - Exam questions and RU/UZ explanations have not had a teacher review yet.
   - Search is literal word matching — no fuzzy/typo tolerance and no synonyms.
   - The GoatCounter **API token does not work** for automated checks (the public
     `?access-token=` value is not an API token), so stats can only be read by logging into
