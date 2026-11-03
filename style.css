@@ -476,6 +476,41 @@ html[data-skin=p4] .qq .bl{color:#b3150e}
 .qhard{text-align:left;margin:14px 0 0;padding:0;list-style:none}
 .qhard li{padding:8px 12px;margin-bottom:6px;border-left:4px solid var(--badc);background:rgba(127,127,127,.12)}
 .qsoon{color:var(--mute);margin-top:16px}
+.qtip{margin:0 0 14px;padding:8px 14px;border:2px dashed var(--edge);background:rgba(127,127,127,.08);font-size:15px}
+.qtip summary{cursor:pointer;font-weight:600;padding:4px 0}
+.qtip summary:focus-visible{outline:3px solid var(--bar);outline-offset:2px}
+.qtip p{margin:6px 0 4px;color:var(--mute);line-height:1.5}
+.qres h4{text-align:left;margin:22px 0 8px}
+.qres h3{display:block}
+.qend p{margin-left:auto;margin-right:auto}
+.qpct{display:flex;width:max-content;max-width:100%;align-items:center;justify-content:center;min-width:150px;padding:6px 26px;margin:10px auto 10px;border:3px solid var(--okc);color:var(--okc);transform:skew(var(--sk))}
+.qpct b{font:400 56px/1.1 var(--head)}
+.qpct.g2{border-color:var(--bar);color:var(--bar)}
+.qpct.g3,.qpct.g4{border-color:var(--badc);color:var(--badc)}
+.qgr{font-size:19px;font-weight:600;margin:4px 0 8px}
+.qsub{color:var(--mute);margin-top:0}
+.qres .qbyx{padding:0;margin:0}
+.qbyx{list-style:none;margin:0;padding:0;display:grid;gap:8px;text-align:left}
+.qbyx li{display:grid;grid-template-columns:minmax(96px,auto) 1fr 52px;gap:12px;align-items:center}
+.qxb{height:10px;background:var(--edge);overflow:hidden}
+.qxb i{display:block;height:100%;background:var(--okc)}
+.qbyx b{text-align:right;font-weight:600}
+.qres .qrow{margin-top:22px}
+.qmod{position:fixed;inset:0;z-index:9200;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(8,8,12,.62);animation:qmf .18s ease-out}
+.qdlg{width:100%;max-width:420px;padding:22px 22px 20px;background:var(--card);color:var(--ink);border:2px solid var(--edge);box-shadow:var(--sh);animation:qmp .22s cubic-bezier(.2,.9,.2,1)}
+.qdlg h3{margin:0 0 8px}
+.qdlg p{margin:0;color:var(--mute);line-height:1.5}
+.qdlg .qrow{margin-top:18px}
+.qrow .ab.qdanger{border-color:var(--badc);color:var(--badc)}
+.qrow .ab.qdanger:hover,.qrow .ab.qdanger:focus-visible{background:var(--badc);color:#fff}
+html[data-skin=basic] .qdlg{border-radius:14px;border-width:1px}
+html[data-skin=basic] .qtip{border-radius:10px;border-width:1px}
+html[data-skin=basic] .qpct{border-radius:14px;border-width:2px;transform:none}
+html[data-skin=basic] .qxb{border-radius:6px}
+@keyframes qmf{from{opacity:0}to{opacity:1}}
+@keyframes qmp{from{opacity:0;transform:translateY(10px) scale(.97)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){.qmod,.qdlg{animation:none}}
+@media(max-width:520px){.qbyx li{grid-template-columns:1fr 52px}.qxb{grid-column:1/-1;grid-row:2}.qpct b{font-size:44px}.qdlg .qrow .go,.qdlg .qrow .ab{flex:1 1 100%;text-align:center}}
 html[data-skin=basic] .qst div,html[data-skin=basic] .qbar,html[data-skin=basic] .qin,html[data-skin=basic] .qch .lt{border-radius:10px;border-width:1px}
 html[data-skin=basic] .qbar{height:8px;border:0;background:var(--edge)}
 html[data-skin=basic] .qre,html[data-skin=basic] .qfb .big{text-transform:none}

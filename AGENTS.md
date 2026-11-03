@@ -201,10 +201,26 @@ Each topic page uses a 5-pane layout:
 - Quiz data format: `rules` = `{key:{en,ru,uz}}` (HTML allowed); `ex` = `[{h:{en,ru,uz}, box?}]` (one per
   exercise, numbered automatically); `q` = `[{e, q, a:[accepted answers], alt?, r:rule key, ru, uz, n?}]`.
   `___` in `q` renders as a blank. `ru`/`uz` are translations shown in that language only; `n` is a
-  string or `{en,ru,uz}`. Answer checking ignores case, punctuation and don't/do not differences.
+  string or `{en,ru,uz}`. Answer checking (`vars`/`right` in `practice.js`) ignores case, punctuation, extra
+  spaces and curly apostrophes, and treats short forms and full forms as equal (don't = do not, I'm = I am,
+  can't = cannot, won't = will not, 's = is / has, 'd = would / had, 'll = will, and `dont` without the apostrophe).
+  Spelling, word order and the verb form must still be exact. `a` may list several accepted answers.
+- **14 quizzes** (A1: to-be, present-simple, present-continuous, past-simple; A2: past-continuous,
+  present-perfect, future-simple-will, be-going-to; B1: present-perfect-continuous, past-perfect,
+  past-perfect-continuous; B2: future-continuous, future-perfect, future-perfect-continuous), 72-111 questions
+  each, 11-12 exercises each (form, spelling, negatives, questions, short answers, time words, contrast with
+  a similar tense, find-the-mistake, word order). Each quiz page has a collapsible "How your answers are
+  checked" tip (EN/RU/UZ, in `practice.js`) that tells students to write full sentences with punctuation but
+  explains that capitals and punctuation are not marked.
+- **Results screen:** when every question is mastered, `practice.js` shows a percentage (right on the first
+  try), a grade message, a bar per exercise, the hard questions, a **Practise the hard ones again** review
+  mode, and **Start all over**. Wrong-answer counts are saved in `localStorage['gd-prac-<id>']` (`w`).
+  **Start all over** opens an in-page dialog (`.qmod` / `.qdlg`, focus on the safe button, Esc cancels), not
+  `window.confirm`.
 - To add a quiz: copy `practice-present-simple.html`, change `<title>`/`<meta>`, hero and the
   `GD_QUIZ` object (new `id`), then add an `<li>` to `.menu` in `practice.html` and update the
-  `· N quiz` count on `index.html` plus its `TR` key in `app.js`.
+  `· N quiz` count on `index.html` plus its `TR` key in `app.js`. Each `.menu` label like `A2 · 80 questions`
+  needs its own `TR` key (RU plural: вопрос / вопроса / вопросов).
 - Styles: the `/* ===== practice arena ===== */` block at the end of `style.css` (`--okc`/`--badc`
   per skin for right/wrong colours).
 - Quizzes are not in the topic search index (gen-search only reads `a1..c1.html`).
@@ -252,11 +268,15 @@ hero/`TR` strings for the new level.
   - **"In plain words" boxes** on all 77 topics (pane 3), plus short meanings beside grammar words.
   - **Basic is the default theme** (Light and Dark), with a spinnable roulette theme wheel styled per theme,
     a **To be quiz** (77 questions), and a **Start all over** button on quizzes.
+  - **Tense quizzes + results screen:** 12 new tense quizzes (see "Practice Arena"), lenient answer
+    matching (case, punctuation, short forms), a results screen and a proper restart dialog. Local until pushed.
 - Open items / known limits:
   - **Mini-game is local only:** `game.js` and `present-simple-game.html` are not committed, and the
-    `Practice` box on `present-simple.html` is kept out of commits. Known bugs: curly apostrophes and
-    an answer ending in a dot and a space are marked wrong, and its RU/UZ "why" text needs correcting.
+    `Practice` box on `present-simple.html` is kept out of commits. The answer matching bug (curly
+    apostrophes, trailing dot, short forms) is fixed in `game.js` with the same matcher as `practice.js`; its
+    RU/UZ "why" text still needs correcting.
   - Exam questions, RU/UZ exam explanations and RU/UZ plain-words boxes have not had a teacher review yet.
+    The same goes for the 12 new tense quizzes (RU/UZ translations of ~960 questions and the rules).
   - Search is literal word matching — no fuzzy/typo tolerance and no synonyms.
   - The GoatCounter **API token does not work** for automated checks (the public
     `?access-token=` value is not an API token), so stats can only be read by logging into
