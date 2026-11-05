@@ -82,6 +82,9 @@ The four count strings that must agree everywhere:
   (reads `gd-theme`/`gd-lang` from storage before paint), then `style.css`.
 - `<body>`: `<header class="top">` = logo + `.hctl` (language group `.lgb` + theme `.chip`),
   then page content inside `.wrap`, then `<script src="app.js">`.
+- The Google Fonts `<link>` must stay **non-blocking**: `media="print" onload="this.media='all'"` plus a `<noscript>` copy.
+  A normal blocking stylesheet left iPhones on a **white page** whenever fonts.googleapis.com was slow or blocked
+  (WebKit waits for it before parsing the body). Never put an external stylesheet or script in `<head>` without `async`/this trick.
 - When adding a page, copy an existing page's `<head>`, header and footer and only change
   `<title>`/`<meta>` content.
 
@@ -269,7 +272,8 @@ hero/`TR` strings for the new level.
   - **Basic is the default theme** (Light and Dark), with a spinnable roulette theme wheel styled per theme,
     a **To be quiz** (77 questions), and a **Start all over** button on quizzes.
   - **Tense quizzes + results screen:** 12 new tense quizzes (see "Practice Arena"), lenient answer
-    matching (case, punctuation, short forms), a results screen and a proper restart dialog. Local until pushed.
+    matching (case, punctuation, short forms), a results screen and a proper restart dialog.
+  - **iPhone white-page fix:** Google Fonts no longer blocks rendering (see "Page conventions").
 - Open items / known limits:
   - **Mini-game is local only:** `game.js` and `present-simple-game.html` are not committed, and the
     `Practice` box on `present-simple.html` is kept out of commits. The answer matching bug (curly
