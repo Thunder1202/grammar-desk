@@ -1,6 +1,7 @@
 /* Practice Studio: shared helpers (storage, validation, engine conversion, dialogs), the hub page and the player page.
    A practice = {v,id,rev,kind:'quiz'|'exam',title,desc,level,author,at,groups:[{h,tip,items:[...]}]}.
-   quiz item = {q,a:[answers],n?,ru?,uz?}   exam item = {q,o:[2-4 options],c:right index,w:[why per option]}. */
+   quiz item = {q,a:[answers],n?,t?,ru?,uz?}   exam item = {q,o:[2-4 options],c:right index,w:[why per option]}.
+   title, desc, h (instruction), tip, t (tip of one question) and n (note) are a string or {en,ru,uz}. */
 (function(){
 var D=document,R=D.documentElement,W=window;
 var KEY='gd-my',MAXQ=200,MAXS=20,MAXP=60,LEVELS=['Any','A1','A2','B1','B2','C1/C2'];
@@ -46,24 +47,32 @@ function t(k,v){var o=UI[k],s=o?(o[lg()]||o.en):k;if(v)for(var x in v)s=s.split(
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
 function str(v,n){return typeof v==='string'?v.replace(/\r/g,'').trim().slice(0,n):''}
+function lstr(v,n){
+ if(typeof v==='string')return str(v,n);
+ if(!v||typeof v!=='object')return '';
+ var o={en:str(v.en,n),ru:str(v.ru,n),uz:str(v.uz,n)};
+ if(!o.en)return '';
+ return (o.ru||o.uz)?o:o.en;
+}
+function loc(v){return typeof v==='string'?v:(v&&(v[lg()]||v.en))||''}
 function count(p){var n=0;p.groups.forEach(function(g){n+=g.items.length});return n}
 
 function clean(p){
  if(!p||typeof p!=='object')return null;
- var kind=p.kind==='exam'?'exam':p.kind==='quiz'?'quiz':null,title=str(p.title,80);
+ var kind=p.kind==='exam'?'exam':p.kind==='quiz'?'quiz':null,title=lstr(p.title,80);
  if(!kind||!title)return null;
- var out={v:1,id:str(p.id,24).replace(/[^a-z0-9-]/gi,'')||uid(),rev:Math.max(1,parseInt(p.rev,10)||1),kind:kind,title:title,desc:str(p.desc,240),level:LEVELS.indexOf(p.level)>-1?p.level:'Any',author:str(p.author,40),at:parseInt(p.at,10)||Date.now(),groups:[]},total=0;
+ var out={v:1,id:str(p.id,24).replace(/[^a-z0-9-]/gi,'')||uid(),rev:Math.max(1,parseInt(p.rev,10)||1),kind:kind,title:title,desc:lstr(p.desc,240),level:LEVELS.indexOf(p.level)>-1?p.level:'Any',author:str(p.author,40),at:parseInt(p.at,10)||Date.now(),groups:[]},total=0;
  (Array.isArray(p.groups)?p.groups.slice(0,MAXS):[]).forEach(function(g){
   if(!g||!Array.isArray(g.items))return;
-  var G={h:str(g.h,200),tip:str(g.tip,600),items:[]};
+  var G={h:lstr(g.h,200),tip:lstr(g.tip,600),items:[]};
   g.items.forEach(function(it){
    if(total>=MAXQ||!it)return;
    var q=str(it.q,400);if(!q)return;
    if(kind==='quiz'){
     var a=(Array.isArray(it.a)?it.a:[]).map(function(x){return str(x,200)}).filter(Boolean).slice(0,10);
     if(!a.length)return;
-    var I={q:q,a:a},n=str(it.n,300),ru=str(it.ru,400),uz=str(it.uz,400);
-    if(n)I.n=n;if(ru)I.ru=ru;if(uz)I.uz=uz;
+    var I={q:q,a:a},n=lstr(it.n,300),tp=lstr(it.t,600),ru=str(it.ru,400),uz=str(it.uz,400);
+    if(n)I.n=n;if(tp)I.t=tp;if(ru)I.ru=ru;if(uz)I.uz=uz;
     G.items.push(I);
    }else{
     var o=(Array.isArray(it.o)?it.o:[]).slice(0,4).map(function(x){return str(x,200)}),c=parseInt(it.c,10);
@@ -97,15 +106,20 @@ var store={
 
 function fmt(s){return esc(s).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>')}
 function tri(s){return {en:s,ru:s,uz:s}}
+function lt(v){return typeof v==='string'?tri(v):{en:v.en,ru:v.ru||v.en,uz:v.uz||v.en}}
+function fmtL(v){var o=lt(v);return {en:fmt(o.en),ru:fmt(o.ru),uz:fmt(o.uz)}}
 function toEngine(p,id){
- var i,Z;
+ var Z;
  if(p.kind==='quiz'){
   Z={id:id,rules:{},ex:[],q:[]};
+  var reg={},nr=0;
   p.groups.forEach(function(g,i){
-   Z.rules['g'+i]=tri(fmt(g.tip));
-   Z.ex.push({h:g.h?tri(g.h):UI.defI});
+   Z.rules['g'+i]=fmtL(g.tip||'');
+   Z.ex.push({h:g.h?lt(g.h):UI.defI});
    g.items.forEach(function(it){
-    var o={e:i,q:it.q,a:it.a,r:'g'+i};
+    var rk='g'+i;
+    if(it.t){var sig=JSON.stringify(it.t);if(!reg[sig]){reg[sig]='r'+(nr++);Z.rules[reg[sig]]=fmtL(it.t)}rk=reg[sig]}
+    var o={e:i,q:it.q,a:it.a,r:rk};
     if(it.n)o.n=it.n;if(it.ru)o.ru=it.ru;if(it.uz)o.uz=it.uz;
     Z.q.push(o);
    });
@@ -114,7 +128,7 @@ function toEngine(p,id){
  }
  Z={id:id,level:'studio.html',lvl:'Practice Studio',topics:{},nolink:true,q:[]};
  p.groups.forEach(function(g,i){
-  Z.topics['g'+i]=g.h||p.title;
+  Z.topics['g'+i]=loc(g.h)||loc(p.title);
   g.items.forEach(function(it){
    Z.q.push({s:'g'+i,q:it.q,o:it.o,a:it.c,w:it.o.map(function(x,k){
     var w=it.w[k];if(w)return [w,w,w];
@@ -149,9 +163,9 @@ function download(name,text){
  a.href=u;a.download=name;D.body.appendChild(a);a.click();a.remove();
  setTimeout(function(){URL.revokeObjectURL(u)},1500);
 }
-function fname(p){return (p.title.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'practice')+'.json'}
+function fname(p){return (loc(p.title).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'practice')+'.json'}
 function onLang(fn){new MutationObserver(fn).observe(R,{attributes:true,attributeFilter:['data-lang']})}
-W.GDS={t:t,esc:esc,uid:uid,clean:clean,count:count,store:store,toEngine:toEngine,ask:ask,download:download,fname:fname,onLang:onLang,LEVELS:LEVELS,MAXQ:MAXQ,MAXS:MAXS,UI:UI};
+W.GDS={loc:loc,t:t,esc:esc,uid:uid,clean:clean,count:count,store:store,toEngine:toEngine,ask:ask,download:download,fname:fname,onLang:onLang,LEVELS:LEVELS,MAXQ:MAXQ,MAXS:MAXS,UI:UI};
 
 var root=D.getElementById('st');
 if(!root)return;
@@ -164,8 +178,8 @@ function meta(p){
  return t(p.kind==='quiz'?'kQuiz':'kExam')+' · '+lv+' · '+(count(p)===1?t('q1'):t('qs',{n:count(p)}));
 }
 function card(p,src){
- var sub=p.desc||'';if(p.author)sub+=(sub?' ':'')+'('+t('by',{a:p.author})+')';
- var h='<li><a class="lv" href="play.html?'+src+'='+esc(p.id)+'"><b>'+esc(p.title)+'</b><span>'+esc(meta(p))+'</span></a>';
+ var sub=loc(p.desc);if(p.author)sub+=(sub?' ':'')+'('+t('by',{a:p.author})+')';
+ var h='<li><a class="lv" href="play.html?'+src+'='+esc(p.id)+'"><b>'+esc(loc(p.title))+'</b><span>'+esc(meta(p))+'</span></a>';
  if(sub)h+='<em class="tp">'+esc(sub)+'</em>';
  if(src==='m')h+='<div class="stact"><a class="ab" href="make.html?e='+esc(p.id)+'">'+esc(t('edit'))+'</a><button class="ab" data-s="exp" data-id="'+esc(p.id)+'">'+esc(t('exp'))+'</button><button class="ab qdanger" data-s="del" data-id="'+esc(p.id)+'">'+esc(t('del'))+'</button></div>';
  return h+'</li>';
@@ -174,7 +188,7 @@ var F={s:'',k:'',l:''},note='';
 function match(p){
  if(F.k&&p.kind!==F.k)return false;
  if(F.l&&p.level!==F.l)return false;
- if(F.s){var hay=(p.title+' '+p.desc+' '+p.author).toLowerCase();if(hay.indexOf(F.s.toLowerCase())<0)return false}
+ if(F.s){var hay=(loc(p.title)+' '+loc(p.desc)+' '+p.author).toLowerCase();if(hay.indexOf(F.s.toLowerCase())<0)return false}
  return true;
 }
 function list(arr,src,empty){
@@ -182,19 +196,24 @@ function list(arr,src,empty){
  var f=arr.filter(match);
  return f.length?'<ul class="menu">'+f.map(function(p){return card(p,src)}).join('')+'</ul>':'<p class="stempty">'+esc(t('noFound'))+'</p>';
 }
+function chips(name,opts,cur,label){
+ return '<div class="qch stchips" role="group" aria-label="'+esc(label)+'">'+opts.map(function(o){return '<button class="lt" type="button" data-s="'+name+'" data-v="'+esc(o[0])+'" aria-pressed="'+(cur===o[0])+'">'+esc(o[1])+'</button>'}).join('')+'</div>';
+}
 function hub(){
  var T=teacher(),M=store.all().sort(function(a,b){return b.at-a.at});
  var h='<div class="stbar"><a class="go" href="make.html">+ '+esc(t('newB'))+'</a><button class="ab" data-s="imp">'+esc(t('impB'))+'</button><input type="file" id="stfile" accept=".json,application/json" hidden></div>';
  h+='<p class="stnote" role="status" id="stmsg">'+esc(note)+'</p>';
- h+='<div class="stflt"><input class="sti" id="stq" type="search" autocomplete="off" aria-label="'+esc(t('sr'))+'" placeholder="'+esc(t('sr'))+'" value="'+esc(F.s)+'">';
- h+='<select class="sti sts" id="stk" aria-label="'+esc(t('fType'))+'"><option value="">'+esc(t('fType'))+'</option><option value="quiz"'+(F.k==='quiz'?' selected':'')+'>'+esc(t('kQuizL'))+'</option><option value="exam"'+(F.k==='exam'?' selected':'')+'>'+esc(t('kExamL'))+'</option></select>';
- h+='<select class="sti sts" id="stl" aria-label="'+esc(t('fLvl'))+'"><option value="">'+esc(t('fLvl'))+'</option>'+LEVELS.map(function(l){return '<option value="'+esc(l)+'"'+(F.l===l?' selected':'')+'>'+esc(l==='Any'?t('lvAny'):l)+'</option>'}).join('')+'</select></div>';
+ if(T.length+M.length>=4){
+  var lv=[['',t('fLvl')]].concat(LEVELS.filter(function(l){return l!=='Any'}).map(function(l){return [l,l]}),[['Any',t('lvAny')]]);
+  h+='<div class="stflt"><input class="sti" id="stq" type="search" autocomplete="off" aria-label="'+esc(t('sr'))+'" placeholder="'+esc(t('sr'))+'" value="'+esc(F.s)+'">';
+  h+=chips('ftype',[['',t('fType')],['quiz',t('kQuiz')],['exam',t('kExam')]],F.k,t('fType'))+chips('flvl',lv,F.l,t('fLvl'))+'</div>';
+ }
  h+='<h2>'+esc(t('teachH'))+'</h2>'+list(T,'t',t('noTeach'));
  h+='<h2>'+esc(t('mineH'))+'</h2>'+list(M,'m',t('noMine'));
  h+='<p class="tag">'+esc(t('local'))+'</p>';
- var keep=D.activeElement&&D.activeElement.id,pos=D.activeElement&&D.activeElement.selectionStart;
+ var ak=D.activeElement,key=ak&&(ak.id==='stq'?'#stq':(ak.dataset&&ak.dataset.s&&ak.dataset.v!==undefined?'[data-s="'+ak.dataset.s+'"][data-v="'+ak.dataset.v+'"]':'')),pos=ak&&ak.selectionStart;
  root.innerHTML=h;
- if(keep&&/^st[qkl]$/.test(keep)){var q=D.getElementById(keep);q.focus();try{q.setSelectionRange(pos,pos)}catch(e){}}
+ if(key){var n=root.querySelector(key);if(n){n.focus();if(key==='#stq')try{n.setSelectionRange(pos,pos)}catch(e){}}}
 }
 function importFile(file){
  var r=new FileReader();
@@ -204,7 +223,7 @@ function importFile(file){
   (Array.isArray(data)?data:[data]).forEach(function(x){
    var p=clean(x);if(!p)return;
    p.id=uid();p.rev=1;p.at=Date.now();
-   if(store.put(p))ok.push(p.title);
+   if(store.put(p))ok.push(loc(p.title));
   });
   note=ok.length?t('impOk',{a:ok.join(', ')}):t('impBad');
   hub();
@@ -216,14 +235,14 @@ function hubEvents(){
   if(e.target.id==='stq'){F.s=e.target.value;hub()}
  });
  root.addEventListener('change',function(e){
-  if(e.target.id==='stk'){F.k=e.target.value;hub()}
-  else if(e.target.id==='stl'){F.l=e.target.value;hub()}
-  else if(e.target.id==='stfile'&&e.target.files[0])importFile(e.target.files[0]);
+  if(e.target.id==='stfile'&&e.target.files[0])importFile(e.target.files[0]);
  });
  root.addEventListener('click',function(e){
   var b=e.target.closest('[data-s]');if(!b)return;
   var a=b.dataset.s,id=b.dataset.id;
-  if(a==='imp')D.getElementById('stfile').click();
+  if(a==='ftype'){F.k=b.dataset.v;hub()}
+  else if(a==='flvl'){F.l=b.dataset.v;hub()}
+  else if(a==='imp')D.getElementById('stfile').click();
   else if(a==='exp'){var p=store.get(id);if(p)download(fname(p),JSON.stringify(p,null,1))}
   else if(a==='del')ask({title:t('delT'),text:t('delQ'),yes:t('delY'),no:t('delN'),onYes:function(){store.del(id);hub()}});
  });
@@ -240,23 +259,22 @@ function play(){
   nf();onLang(nf);
   return;
  }
- D.title=p.title+' - Grammar Desk';
- if(h1)h1.textContent=p.title;
- if(cr)cr.textContent=p.title;
- if(sub){
-  var s=p.desc||'';if(p.author)s+=(s?' ':'')+'('+t('by',{a:p.author})+')';
-  sub.textContent=s;sub.hidden=!s;
+ var ed=D.getElementById('pe'),bk=D.getElementById('pb');
+ function head(){
+  var ti=loc(p.title);
+  D.title=ti+' - Grammar Desk';
+  if(h1)h1.textContent=ti;
+  if(cr)cr.textContent=ti;
+  if(sub){var s=loc(p.desc);if(p.author)s+=(s?' ':'')+'('+t('by',{a:p.author})+')';sub.textContent=s;sub.hidden=!s}
+  if(ed&&src==='m'){ed.hidden=false;ed.href='make.html?e='+encodeURIComponent(p.id);ed.textContent=t('editB')}
+  if(bk){bk.hidden=false;bk.textContent=t('back')}
  }
+ head();onLang(head);
  root.id='qz';
  W[p.kind==='quiz'?'GD_QUIZ':'GD_EXAM']=toEngine(p,src+'-'+p.id+'-'+p.rev);
  var sc=D.createElement('script');sc.src=p.kind==='quiz'?'practice.js':'exam.js';D.body.appendChild(sc);
- if(src==='m'){
-  var ed=D.getElementById('pe');
-  if(ed){ed.hidden=false;ed.href='make.html?e='+encodeURIComponent(p.id);ed.textContent=t('editB')}
- }
- var bk=D.getElementById('pb');if(bk){bk.hidden=false;bk.textContent=t('back')}
- onLang(function(){var ed=D.getElementById('pe'),bk=D.getElementById('pb');if(ed&&!ed.hidden)ed.textContent=t('editB');if(bk)bk.textContent=t('back')});
 }
+
 
 if(mode==='hub'){hub();hubEvents()}
 else if(mode==='play')play();

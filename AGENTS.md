@@ -209,7 +209,7 @@ Each topic page uses a 5-pane layout:
   spaces and curly apostrophes, and treats short forms and full forms as equal (don't = do not, I'm = I am,
   can't = cannot, won't = will not, 's = is / has, 'd = would / had, 'll = will, and `dont` without the apostrophe).
   Spelling, word order and the verb form must still be exact. `a` may list several accepted answers.
-- **15 quizzes** (A1: to-be, present-simple, present-continuous, past-simple, have-has; A2: past-continuous,
+- **14 quizzes** (A1: to-be, present-simple, present-continuous, past-simple; A2: past-continuous,
   present-perfect, future-simple-will, be-going-to; B1: present-perfect-continuous, past-perfect,
   past-perfect-continuous; B2: future-continuous, future-perfect, future-perfect-continuous), 72-111 questions
   each, 11-12 exercises each (form, spelling, negatives, questions, short answers, time words, contrast with
@@ -238,7 +238,7 @@ Each topic page uses a 5-pane layout:
   `studio-data.js`, commit and push. Play link: `play.html?t=<id>`. Ids: only `a-z 0-9 -`, unique. A student's practice is
   never public; they can only send you its exported `.json`, which you can paste into the array (re-id it).
 - **Practice object** (top of `studio.js`): `{id,kind:'quiz'|'exam',title,desc,level:'Any|A1|A2|B1|B2|C1/C2',author,rev,at,
-  groups:[{h:instruction,tip:rule shown after each answer,items:[...]}]}`. Quiz item `{q,a:[answers],n?,ru?,uz?}`; exam item
+  groups:[{h:instruction,tip:rule shown after each answer,items:[...]}]}`. `title`, `desc`, `h`, `tip` and a quiz item's `t` (its own rule, overrides the section tip) and `n` may be a string or `{en,ru,uz}`: that is how teacher practices show their rules in all three languages. Quiz item `{q,a:[answers],n?,t?,ru?,uz?}`; exam item
   `{q,o:[2-4 options],c:right index,w:[why per option]}`. `clean()` validates and limits everything (200 questions, 20 sections).
 - `toEngine()` converts a practice to `GD_QUIZ` / `GD_EXAM` and `play.html` loads `practice.js` / `exam.js`, so answer checking,
   results screen and restart dialog are shared. **User text is HTML-escaped** (`**bold**` is the only markup) because the
@@ -295,7 +295,7 @@ hero/`TR` strings for the new level.
     matching (case, punctuation, short forms), a results screen and a proper restart dialog.
   - **iPhone white-page fix:** Google Fonts no longer blocks rendering (see "Page conventions").
   - **Practice Studio:** create-your-own practices saved on the device, export/import, and a teacher's shelf (`studio-data.js`).
-    Local until pushed; the shelf is empty until the teacher's practices are added.
+    The first teacher practice is **Have / Has** (`id` have-has, 78 questions, EN/RU/UZ). The Studio filters are tap buttons (no native `<select>`: its popup was unreadable in dark and Persona themes).
 - Open items / known limits:
   - **Mini-game is local only:** `game.js` and `present-simple-game.html` are not committed, and the
     `Practice` box on `present-simple.html` is kept out of commits. The answer matching bug (curly

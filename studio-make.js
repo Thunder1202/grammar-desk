@@ -13,13 +13,13 @@ var MU={
  fAuthor:{en:"Your name (optional)",ru:"Ваше имя (необязательно)",uz:"Ismingiz (majburiy emas)"},
  secH:{en:"Section {n}",ru:"Раздел {n}",uz:"{n}-bo'lim"},
  secT:{en:"Instruction for this section (optional)",ru:"Задание для этого раздела (необязательно)",uz:"Bu bo'lim uchun topshiriq (majburiy emas)"},
- secTP:{en:"For example: Write the verb in brackets in the Past Simple.",ru:"Например: Напишите глагол в скобках в Past Simple.",uz:"Masalan: Qavs ichidagi fe'lni Past Simple da yozing."},
- secTip:{en:"Rule or tip shown after each answer (optional)",ru:"Правило или подсказка после каждого ответа (необязательно)",uz:"Har bir javobdan keyin ko'rsatiladigan qoida yoki maslahat (majburiy emas)"},
- secTipP:{en:"For example: After did we use the base verb. Use **bold** for important words.",ru:"Например: После did глагол в начальной форме. Важные слова — **жирным**.",uz:"Masalan: did dan keyin fe'l asosiy shaklda bo'ladi. Muhim so'zlarni **qalin** qiling."},
+ secTP:{en:"e.g. Write the verb in the Past Simple.",ru:"напр. Напишите глагол в Past Simple.",uz:"masalan: Fe'lni Past Simple da yozing."},
+ secTip:{en:"Rule or tip shown after each answer (optional). Use **bold** for key words.",ru:"Правило или подсказка после каждого ответа (необязательно). Важное — **жирным**.",uz:"Har bir javobdan keyin ko'rsatiladigan qoida yoki maslahat (majburiy emas). Muhimini **qalin** qiling."},
+ secTipP:{en:"e.g. After **did** use the base verb.",ru:"напр. После **did** глагол в начальной форме.",uz:"masalan: **did** dan keyin fe'l asosiy shaklda."},
  addSec:{en:"Add a section",ru:"Добавить раздел",uz:"Bo'lim qo'shish"},
  rmSec:{en:"Remove this section",ru:"Удалить этот раздел",uz:"Bu bo'limni o'chirish"},
- qL:{en:"Question",ru:"Вопрос",uz:"Savol"},
- qP:{en:"Use ___ for the gap. For example: She ___ (play) tennis.",ru:"___ — пропуск. Например: She ___ (play) tennis.",uz:"___ — bo'sh joy. Masalan: She ___ (play) tennis."},
+ qL:{en:"Question (use ___ for the gap)",ru:"Вопрос (___ — пропуск)",uz:"Savol (___ — bo'sh joy)"},
+ qP:{en:"She ___ (play) tennis.",ru:"She ___ (play) tennis.",uz:"She ___ (play) tennis."},
  aL:{en:"Correct answers (one per line)",ru:"Правильные ответы (по одному в строке)",uz:"To'g'ri javoblar (har qatorda bittadan)"},
  aP:{en:"plays",ru:"plays",uz:"plays"},
  nL:{en:"Explanation after the answer (optional)",ru:"Пояснение после ответа (необязательно)",uz:"Javobdan keyingi izoh (majburiy emas)"},
@@ -72,7 +72,7 @@ var t=G.t,esc=G.esc,DKEY='gd-make-draft',E,msg=null,bulkOpen=false,timer=0,param
 
 function blankItem(kind){return kind==='quiz'?{q:'',a:'',n:''}:{q:'',o:['','',''],c:-1,w:['','','']}}
 function blank(){return {id:'',rev:0,at:0,kind:'quiz',title:'',desc:'',level:'Any',author:'',groups:[{h:'',tip:'',items:[blankItem('quiz')]}]}}
-function s(v){return typeof v==='string'?v:''}
+function s(v){return typeof v==='string'?v:(v&&typeof v==='object'&&typeof v.en==='string'?v.en:'')}
 function norm(e){
  var kind=e&&e.kind==='exam'?'exam':'quiz',o={id:s(e&&e.id),rev:parseInt(e&&e.rev,10)||0,at:parseInt(e&&e.at,10)||0,kind:kind,title:s(e&&e.title),desc:s(e&&e.desc),level:G.LEVELS.indexOf(e&&e.level)>-1?e.level:'Any',author:s(e&&e.author),groups:[]};
  (e&&Array.isArray(e.groups)?e.groups:[]).slice(0,G.MAXS).forEach(function(g){
@@ -166,7 +166,8 @@ function html(){
   h+='<label class="stkd'+(E.kind===k?' on':'')+'"><input type="radio" name="kind" value="'+k+'"'+(E.kind===k?' checked':'')+'><b>'+esc(t(k==='quiz'?'kQuizL':'kExamL'))+'</b><small>'+esc(t(k==='quiz'?'kQuizD':'kExamD'))+'</small></label>';
  });
  h+='</fieldset>'+lbl(t('fTitle'),inp('title',E.title,t('fTitleP')))+lbl(t('fDesc'),inp('desc',E.desc,''));
- h+='<div class="stpair">'+lbl(t('fLevel'),'<select class="sti sts" data-f="level">'+G.LEVELS.map(function(l){return '<option value="'+esc(l)+'"'+(E.level===l?' selected':'')+'>'+esc(l==='Any'?t('lvAny'):l)+'</option>'}).join('')+'</select>')+lbl(t('fAuthor'),inp('author',E.author,''))+'</div></section>';
+ h+=lbl(t('fAuthor'),inp('author',E.author,''));
+ h+='<div class="stl"><span>'+esc(t('fLevel'))+'</span><div class="qch stchips" role="group" aria-label="'+esc(t('fLevel'))+'">'+G.LEVELS.map(function(l){return '<button class="lt" type="button" data-m="lvl" data-v="'+esc(l)+'" aria-pressed="'+(E.level===l)+'">'+esc(l==='Any'?t('lvAny'):l)+'</button>'}).join('')+'</div></div></section>';
  E.groups.forEach(function(g,gi){
   h+='<section class="card stcard" data-sec="'+gi+'"><div class="sthd"><h3>'+esc(t('secH',{n:gi+1}))+'</h3>'+(E.groups.length>1?'<button class="ab qdanger" type="button" data-m="rmsec" data-g="'+gi+'">'+esc(t('rmSec'))+'</button>':'')+'</div>';
   h+=lbl(t('secT'),inp('gh',g.h,t('secTP')));
@@ -176,7 +177,8 @@ function html(){
  });
  h+='<div class="stbar"><button class="ab" type="button" data-m="addsec">+ '+esc(t('addSec'))+'</button></div>';
  h+='<details class="qtip stbulk"'+(bulkOpen?' open':'')+'><summary>'+esc(t('bulkT'))+'</summary><p>'+esc(t(E.kind==='quiz'?'bulkQ':'bulkE'))+'</p><textarea class="sti sta" id="stbulk" rows="6" aria-label="'+esc(t('bulkT'))+'"></textarea><div class="qrow"><button class="ab" type="button" data-m="bulk">'+esc(t('bulkB'))+'</button></div></details>';
- h+='<div class="stsave"><span class="stcount" id="stcnt">'+esc(t('cnt',{n:total()}))+'</span><button class="go" type="button" data-m="save">'+esc(t('save'))+'</button><button class="ab" type="button" data-m="export">'+esc(t('expB'))+'</button><button class="ab" type="button" data-m="fresh">'+esc(t('fresh'))+'</button></div>';
+ h+='<div class="stbar"><button class="ab" type="button" data-m="export">'+esc(t('expB'))+'</button><button class="ab" type="button" data-m="fresh">'+esc(t('fresh'))+'</button></div>';
+ h+='<div class="stsave"><span class="stcount" id="stcnt">'+esc(t('cnt',{n:total()}))+'</span><button class="go" type="button" data-m="save">'+esc(t('save'))+'</button></div>';
  return h;
 }
 function render(focus){
@@ -270,6 +272,7 @@ root.addEventListener('change',function(e){
 root.addEventListener('click',function(e){
  var b=e.target.closest('[data-m]');if(!b)return;
  var m=b.dataset.m,gi=+b.dataset.g,ii=+b.dataset.i,k=+b.dataset.k,g=E.groups[gi],it;
+ if(m==='lvl'){E.level=b.dataset.v;draft();[].forEach.call(b.parentNode.children,function(x){x.setAttribute('aria-pressed',String(x===b))});return}
  if(m==='addq'){
   if(total()>=G.MAXQ){say('sterr',esc(t('many',{n:G.MAXQ})));return}
   g.items.push(blankItem(E.kind));draft();render(focusItem(gi,g.items.length-1));

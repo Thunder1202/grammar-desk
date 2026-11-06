@@ -787,13 +787,15 @@ html[data-skin=basic] .gri.bad{border-color:var(--bad)}
 /* ===== practice studio ===== */
 .stbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:14px 0}
 .stnote{min-height:1.2em;margin:0 0 10px;color:var(--mute)}
-.stflt{display:grid;grid-template-columns:2fr 1fr 1fr;gap:10px;margin:8px 0 6px}
+.stflt{margin:8px 0 6px}
+.stflt .sti{margin-bottom:8px}
+.stchips{flex-wrap:wrap;overflow:visible;padding:2px 2px 8px;margin:0}
+.stl .stchips{padding-left:0}
 .stempty{color:var(--mute);margin:6px 0 18px}
 .sti{all:unset;box-sizing:border-box;display:block;width:100%;padding:11px 13px;background:var(--card);color:var(--ink);border:2px solid var(--edge);font:500 16px/1.4 "Barlow","Golos Text",sans-serif;transition:border-color .2s}
 .sti::placeholder{color:var(--mute);opacity:.8}
 .sti:focus{border-color:var(--bar)}
 .sta{resize:vertical;white-space:pre-wrap;min-height:70px}
-.sts{appearance:auto;-webkit-appearance:menulist;cursor:pointer}
 .stl{display:block;margin:0 0 12px}
 .stl>span{display:block;font-weight:600;font-size:15px;margin-bottom:4px}
 .stcard{margin-bottom:16px}
@@ -817,7 +819,7 @@ html[data-skin=basic] .gri.bad{border-color:var(--bad)}
 .stbtn .ab{padding:4px 10px;min-width:40px;text-align:center}
 .ab.qdanger{border-color:var(--badc)!important;color:var(--badc)!important}
 .ab.qdanger:hover,.ab.qdanger:focus-visible{background:var(--badc)!important;color:#fff!important}
-.stsave{position:sticky;bottom:0;z-index:5;display:flex;gap:10px;flex-wrap:wrap;align-items:center;padding:12px 0 calc(12px + env(safe-area-inset-bottom,0px));margin-top:12px;background:var(--bg);border-top:1px solid var(--edge)}
+.stsave{position:sticky;bottom:0;z-index:5;display:flex;gap:12px;flex-wrap:nowrap;align-items:center;padding:12px 0 calc(12px + env(safe-area-inset-bottom,0px));margin-top:12px;background:var(--bg);border-top:1px solid var(--edge)}
 .stcount{margin-right:auto;color:var(--mute);font-weight:600}
 .stok,.sterr{padding:12px 16px;margin:0 0 14px;border-left:6px solid var(--okc);background:rgba(127,127,127,.12)}
 .sterr{border-left-color:var(--badc)}
@@ -828,4 +830,4 @@ html[data-skin=basic] .gri.bad{border-color:var(--bad)}
 html[data-skin=basic] .sti,html[data-skin=basic] .stkd{border-radius:10px;border-width:1px}
 html[data-skin=basic] .stbar .ab,html[data-skin=basic] .stbtn .ab,html[data-skin=basic] .stact .ab,html[data-skin=basic] .stsave .ab,html[data-skin=basic] .stopts .ab,html[data-skin=basic] .sthd .ab,html[data-skin=basic] .stok .ab,html[data-skin=basic] .stbulk .ab{border-radius:10px;border-width:1px}
 html[data-skin=basic] .stok,html[data-skin=basic] .sterr{border-radius:0 10px 10px 0}
-@media(max-width:600px){.stflt,.stpair{grid-template-columns:1fr}.stsave .go{flex:1 1 100%;text-align:center}}
+@media(max-width:600px){.stpair{grid-template-columns:1fr}.stsave .go{flex:1 1 auto;text-align:center}}
