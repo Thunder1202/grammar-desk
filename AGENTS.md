@@ -34,6 +34,7 @@ A static English-grammar learning site for levels **A1, A2, B1, B2, C1/C2**, ava
 - `practice.html` — **Practice Arena** hub (linked from the home page under "Practice"): a `.menu` of quizzes.
 - `practice-<topic>.html` — one quiz page each. Quiz data is an inline `window.GD_QUIZ = {id, rules, ex, q}`
   script, followed by `practice.js` (the shared quiz engine).
+- `studio.html`, `make.html`, `play.html` + `studio.js`, `studio-make.js`, `studio-data.js` — the **Practice Studio** (see "Practice Studio").
 - `exam-<level>-<n>.html` — one mini exam each (13 pages). See "Mini exams". Engine: `exam.js`.
 - `practice.js` — quiz engine: stats, progress bar, exercise chips, answer checking, wrong answers come
   back 4 questions later, progress saved in `localStorage['gd-prac-<id>']`. All its UI text is in its
@@ -208,7 +209,7 @@ Each topic page uses a 5-pane layout:
   spaces and curly apostrophes, and treats short forms and full forms as equal (don't = do not, I'm = I am,
   can't = cannot, won't = will not, 's = is / has, 'd = would / had, 'll = will, and `dont` without the apostrophe).
   Spelling, word order and the verb form must still be exact. `a` may list several accepted answers.
-- **14 quizzes** (A1: to-be, present-simple, present-continuous, past-simple; A2: past-continuous,
+- **15 quizzes** (A1: to-be, present-simple, present-continuous, past-simple, have-has; A2: past-continuous,
   present-perfect, future-simple-will, be-going-to; B1: present-perfect-continuous, past-perfect,
   past-perfect-continuous; B2: future-continuous, future-perfect, future-perfect-continuous), 72-111 questions
   each, 11-12 exercises each (form, spelling, negatives, questions, short answers, time words, contrast with
@@ -227,6 +228,25 @@ Each topic page uses a 5-pane layout:
 - Styles: the `/* ===== practice arena ===== */` block at the end of `style.css` (`--okc`/`--badc`
   per skin for right/wrong colours).
 - Quizzes are not in the topic search index (gen-search only reads `a1..c1.html`).
+
+## Practice Studio (create your own practices)
+- **No server.** Anyone can build a typed-answer quiz or a multiple-choice mini exam on `make.html`; it is saved in that
+  browser (`localStorage['gd-my']`, max 60) and played on `play.html?m=<id>`. Export/Import use a `.json` file. An unsaved
+  draft is kept in `localStorage['gd-make-draft']`. `studio.html` is the hub: **Teacher's practices** (from `studio-data.js`)
+  and **My practices** (this device), with search and type/level filters.
+- **Teacher's practices are public** because they are committed: add practice objects to the `window.GD_Teacher` array in
+  `studio-data.js`, commit and push. Play link: `play.html?t=<id>`. Ids: only `a-z 0-9 -`, unique. A student's practice is
+  never public; they can only send you its exported `.json`, which you can paste into the array (re-id it).
+- **Practice object** (top of `studio.js`): `{id,kind:'quiz'|'exam',title,desc,level:'Any|A1|A2|B1|B2|C1/C2',author,rev,at,
+  groups:[{h:instruction,tip:rule shown after each answer,items:[...]}]}`. Quiz item `{q,a:[answers],n?,ru?,uz?}`; exam item
+  `{q,o:[2-4 options],c:right index,w:[why per option]}`. `clean()` validates and limits everything (200 questions, 20 sections).
+- `toEngine()` converts a practice to `GD_QUIZ` / `GD_EXAM` and `play.html` loads `practice.js` / `exam.js`, so answer checking,
+  results screen and restart dialog are shared. **User text is HTML-escaped** (`**bold**` is the only markup) because the
+  quiz engine prints rules as HTML. Never pass raw user text as a rule. Engine progress key includes `rev`, so editing a
+  practice resets its saved progress. `exam.js` honours `Z.nolink` (custom practices have no topic pages to link to).
+- **Open public board** (anyone publishes, everyone sees) was considered and left out: it needs a database/API (e.g. a Neon
+  Function) plus spam and moderation handling. Nothing was created in Neon. The practice object is already JSON, so a board
+  can be added later without changing the editor.
 
 ## Mini exams
 - One exam per 6 topics, in level-menu order. 1-2 leftover topics join the last exam of that level;
@@ -274,6 +294,8 @@ hero/`TR` strings for the new level.
   - **Tense quizzes + results screen:** 12 new tense quizzes (see "Practice Arena"), lenient answer
     matching (case, punctuation, short forms), a results screen and a proper restart dialog.
   - **iPhone white-page fix:** Google Fonts no longer blocks rendering (see "Page conventions").
+  - **Practice Studio:** create-your-own practices saved on the device, export/import, and a teacher's shelf (`studio-data.js`).
+    Local until pushed; the shelf is empty until the teacher's practices are added.
 - Open items / known limits:
   - **Mini-game is local only:** `game.js` and `present-simple-game.html` are not committed, and the
     `Practice` box on `present-simple.html` is kept out of commits. The answer matching bug (curly

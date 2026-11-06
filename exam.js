@@ -74,7 +74,7 @@ function end(){
  var pct=s/N,h='<section class="card qend"><h3>'+esc(u('res',{a:s,b:N}))+'</h3><p>'+esc(u(pct>=.8?'v3':pct>=.5?'v2':'v1'))+'</p><p class="qhelp">'+esc(u('best',{a:best(),b:N}))+'</p>';
  if(ks.length){
   h+='<p><b>'+esc(u('rev'))+'</b></p><ul class="qhard">';
-  ks.forEach(function(k){h+='<li><a href="'+esc(k)+'.html">'+esc(Z.topics[k])+'</a> ('+wrong[k]+')</li>'});
+  ks.forEach(function(k){h+='<li>'+(Z.nolink?esc(Z.topics[k]):'<a href="'+esc(k)+'.html">'+esc(Z.topics[k])+'</a>')+' ('+wrong[k]+')</li>'});
   h+='</ul><p><b>'+esc(u('miss'))+'</b></p><ul class="qhard">';
   list.forEach(function(q){h+='<li>'+esc(q.q)+' → <b>'+esc(q.o[q.a])+'</b></li>'});
   h+='</ul>';
