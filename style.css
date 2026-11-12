@@ -108,6 +108,7 @@ html[data-skin=basic] .card h3{font:700 22px var(--head);text-transform:none}
 html[data-skin=basic] .card h4{font:700 16px var(--head);text-transform:none}
 html[data-skin=basic] .tb th{font:600 14px var(--head);text-transform:none}
 html[data-skin=basic] .tb td:first-child{font:600 16px var(--head)}
+:root .tb.tbw td:first-child{font:inherit;width:auto;text-align:left}
 
 /* previews */
 .menu li{position:relative}
