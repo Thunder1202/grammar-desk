@@ -124,7 +124,8 @@ Each topic page uses a 5-pane layout:
   confuse it with, pitched at the topic's level. Text-heavy tables use `class="tb tbw"` (normal-width first column).
   The added block starts with `<!--gd-more-->` in the EN `.lg`. Pane 5 drills are grouped under `<h4>` headings
   (Make it negative, Make a question, Short answers, a this-or-that choice, Find the mistake), ~19-23 questions.
-  Done: all A1 and A2 topics, and first-conditional. Still to do: B1 (except first-conditional), B2, C1/C2.
+  Done: all A1, A2 and B1 topics. Still to do: B2, C1/C2. (relative-clauses has two sets of `.lg` blocks in pane 2;
+  the added text goes at the end of the last set.)
 
 ## Internationalisation (two systems — both must be respected)
 1. **Lesson content**: elements marked `.lg[data-l=xx]`; CSS shows only the block matching
@@ -302,7 +303,7 @@ hero/`TR` strings for the new level.
   - **iPhone white-page fix:** Google Fonts no longer blocks rendering (see "Page conventions").
   - **Practice Studio:** create-your-own practices saved on the device, export/import, and a teacher's shelf (`studio-data.js`).
     The first teacher practice is **Have / Has** (`id` have-has, 78 questions, EN/RU/UZ). The Studio filters are tap buttons (no native `<select>`: its popup was unreadable in dark and Persona themes).
-  - **Fuller rules + longer drills** on all 19 A1 and 16 A2 topics and First Conditional (see "Lesson template"). RU/UZ text not
+  - **Fuller rules + longer drills** on all 19 A1, 16 A2 and 18 B1 topics (see "Lesson template"). RU/UZ text not
     teacher-reviewed yet.
 - Open items / known limits:
   - **Mini-game is local only:** `game.js` and `present-simple-game.html` are not committed, and the
