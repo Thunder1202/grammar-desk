@@ -119,12 +119,13 @@ Each topic page uses a 5-pane layout:
   `<div class="prac nxt"><p class="ptx">Next topic</p><a class="chip" href="slug.html">Title</a></div>`.
   The last topic of a level uses `Next level` and links to the next level page; the last C1/C2 topic
   uses `You finished the last topic!` and links `Home`.
-- **Fuller rules (rollout in progress):** pane 2 also explains, in all three languages, how to build negatives and
+- **Fuller rules (on all 77 topics):** pane 2 also explains, in all three languages, how to build negatives and
   questions step by step (with a question-word table) and a "why this, not that?" comparison with the form learners
   confuse it with, pitched at the topic's level. Text-heavy tables use `class="tb tbw"` (normal-width first column).
   The added block starts with `<!--gd-more-->` in the EN `.lg`. Pane 5 drills are grouped under `<h4>` headings
   (Make it negative, Make a question, Short answers, a this-or-that choice, Find the mistake), ~19-23 questions.
-  Done: all A1, A2, B1 and B2 topics. Still to do: C1/C2. (relative-clauses has two sets of `.lg` blocks in pane 2;
+  C1/C2 pages focus on why / when to use a form (effect, register) and its traps rather than basic questions.
+  A new topic should get the same sections. (relative-clauses has two sets of `.lg` blocks in pane 2;
   the added text goes at the end of the last set.)
 
 ## Internationalisation (two systems — both must be respected)
@@ -303,7 +304,7 @@ hero/`TR` strings for the new level.
   - **iPhone white-page fix:** Google Fonts no longer blocks rendering (see "Page conventions").
   - **Practice Studio:** create-your-own practices saved on the device, export/import, and a teacher's shelf (`studio-data.js`).
     The first teacher practice is **Have / Has** (`id` have-has, 78 questions, EN/RU/UZ). The Studio filters are tap buttons (no native `<select>`: its popup was unreadable in dark and Persona themes).
-  - **Fuller rules + longer drills** on all 19 A1, 16 A2, 18 B1 and 14 B2 topics (see "Lesson template"). RU/UZ text not
+  - **Fuller rules + longer drills** on all 77 topics, ~1,590 drill questions in total (see "Lesson template"). RU/UZ text not
     teacher-reviewed yet.
 - Open items / known limits:
   - **Mini-game is local only:** `game.js` and `present-simple-game.html` are not committed, and the
